@@ -1,0 +1,16 @@
+Purpose:The purpose of this document is to provide a detailed specification for the development of ChatApp, chat application that allows users to communicate in real-time through text, multimedia, and group chats.
+
+Product Functions:
+1.User registration and authentication
+2.Contacts
+3.One-on-one and group chats
+4.Multimedia sharing
+5.Emojis and stickers for expressive communication
+
+User Interfaces:
+1.Login and registration screens
+2.Contacts list
+3.Chat interface
+4.logout
+5.change password
+
