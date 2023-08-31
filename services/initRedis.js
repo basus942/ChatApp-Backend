@@ -23,4 +23,13 @@ const rediscon = () => {
   });
 };
 
+// client.connect();
+// client.on("connect", () => {
+//   console.log("Client is connected to Redis");
+// });
+
+// client.on("error", (error) => {
+//   console.error("Error connecting to Redis:", error);
+// });
+
 module.exports = { client, rediscon };
