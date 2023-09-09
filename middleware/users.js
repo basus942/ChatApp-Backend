@@ -3,7 +3,7 @@ const User = require("../models/userModel");
 const { redisClient } = require("../services/index");
 require("dotenv").config;
 module.exports = {
-  getUserData: async (req, res, next) => {
+  getLoggedinUserData: async (req, res, next) => {
     if (!req.headers["authorization"]) {
       res.send({ userData: null });
       return;
@@ -25,11 +25,21 @@ module.exports = {
       }
       try {
         const userData = await User.findById(userId);
-        res.send({ userData: userData });
+        const { password, ...others } = userData._doc;
+        res.send({ userData: others });
       } catch (error) {
         res.send({ userData: null });
         next();
       }
     });
+  },
+  getUserInfo: async (req, res, next) => {
+    try {
+      const userData = await User.findById(req.params.userId);
+      const { password, ...others } = userData._doc;
+      res.status(200).json(others);
+    } catch (error) {
+      next(error);
+    }
   },
 };

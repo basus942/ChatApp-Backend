@@ -5,8 +5,10 @@ require("dotenv").config();
 const { db, jwtServices, jwtAdminServices } = require("./services");
 const authRoutes = require("./routes/authRoute");
 const adminRoute = require("./routes/adminRoute");
+const conversationRoute = require("./routes/conversationRoute");
+const messageRoute = require("./routes/messageRoute");
 
-const { getUserData } = require("./middleware/users");
+const { getLoggedinUserData, getUserInfo } = require("./middleware/users");
 const { notFound, internalServerError } = require("./middleware/errors");
 
 const app = express();
@@ -30,7 +32,11 @@ app.get(
   }
 );
 
-app.get("/user/profile", getUserData);
+app.get("/user/profile", getLoggedinUserData);
+app.get("/user/:userId", getUserInfo);
+
+app.use("/conversations", conversationRoute);
+app.use("/messages", messageRoute);
 
 //errorHandle
 app.use(notFound);
