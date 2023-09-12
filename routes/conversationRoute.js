@@ -25,5 +25,26 @@ router.get("/:userId", async (req, res, next) => {
     next(error);
   }
 });
+router.get("/:firstUserId/:secondUserId", async (req, res, next) => {
+  try {
+    const conversations = await Conversations.findOne({
+      members: { $all: [req.params.firstUserId, req.params.secondUserId] },
+    });
+
+    if (!conversations) {
+      // If no conversation is found, create a new conversation
+      const newConversation = new Conversations({
+        members: [req.params.firstUserId, req.params.secondUserId],
+      });
+
+      const savedConversation = await newConversation.save();
+      res.status(200).json(savedConversation);
+    } else {
+      res.status(200).json(conversations);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
