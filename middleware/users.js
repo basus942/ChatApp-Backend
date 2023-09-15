@@ -1,37 +1,45 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
-
-const getUserData = (req, res, next) => {
-  if (!req.headers["authorization"]) {
-    req.userData = null;
-    return next();
-  }
-  const authHeader = req.headers["authorization"];
-  const bearerToken = authHeader.split(" ");
-  const token = bearerToken[1];
-
-  jwt.verify(token, process.env.ACCESSTOKEN_KEY, async (err, payload) => {
-    if (err) {
-      req.userData = null;
-      return next();
+const { redisClient } = require("../services/index");
+require("dotenv").config;
+module.exports = {
+  getLoggedinUserData: async (req, res, next) => {
+    if (!req.headers["authorization"]) {
+      res.send({ userData: null });
+      return;
     }
-    const userId = payload.aud;
-    const existsInRedis = await client.exists(userId);
+    const authHeader = req.headers["authorization"];
+    const bearerToken = authHeader.split(" ");
+    const token = bearerToken[1];
+    jwt.verify(token, process.env.ACCESSTOKEN_KEY, async (err, payload) => {
+      if (err) {
+        res.send({ userData: null });
+        return;
+      }
+      const userId = payload.aud;
+      const existsInRedis = await redisClient.exists(userId);
 
-    if (!existsInRedis) {
-      req.userData = null;
-      return next();
+      if (!existsInRedis) {
+        res.send({ userData: null });
+        return;
+      }
+      try {
+        const userData = await User.findById(userId);
+        const { password, ...others } = userData._doc;
+        res.send({ userData: others });
+      } catch (error) {
+        res.send({ userData: null });
+        next();
+      }
+    });
+  },
+  getUserInfo: async (req, res, next) => {
+    try {
+      const userData = await User.findById(req.params.userId);
+      const { password, ...others } = userData._doc;
+      res.status(200).json(others);
+    } catch (error) {
+      next(error);
     }
-
-    const userData = await User.findById(userId);
-    if (!userData) {
-      req.userData = null;
-      return next();
-    }
-    req.payload = payload;
-    req.userData = userData;
-    res.send({ userData });
-
-    next();
-  });
+  },
 };
-module.exports = getUserData;
