@@ -7,10 +7,8 @@ const authRoutes = require("./routes/authRoute");
 const adminRoute = require("./routes/adminRoute");
 const conversationRoute = require("./routes/conversationRoute");
 const messageRoute = require("./routes/messageRoute");
-<<<<<<< HEAD
+
 const paymentRoute = require("./routes/paymentRoute");
-=======
->>>>>>> 8d1d1bada8fdb8a1f0185d8bbebebdbfb722a1ab
 
 const { getLoggedinUserData, getUserInfo } = require("./middleware/users");
 const { notFound, internalServerError } = require("./middleware/errors");
@@ -42,11 +40,8 @@ app.get("/user/:userId", getUserInfo);
 app.use("/conversations", conversationRoute);
 app.use("/messages", messageRoute);
 
-<<<<<<< HEAD
 app.use("/payment", paymentRoute);
 
-=======
->>>>>>> 8d1d1bada8fdb8a1f0185d8bbebebdbfb722a1ab
 //errorHandle
 app.use(notFound);
 app.use(internalServerError);
